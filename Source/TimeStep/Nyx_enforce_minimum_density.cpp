@@ -69,18 +69,38 @@ compute_mu_for_enforce_min_density(
         Real from_khi = fac * avail_from_khi;
         Real from_klo = fac * avail_from_klo;
 
+        // mu should always be positive - we view this as a "diffusive" operator
+
         if (from_ihi > 0)
+        {
             mu_x(i+1,j,k) =  from_ihi / (state(i+1,j,k,URHO) - state(i  ,j,k,URHO));
+            if (mu_x(i+1,j,k) < 0.) amrex::Abort("mu_x(i+1,j,k) < 0");
+        }
         if (from_ilo > 0)
+        {
             mu_x(i  ,j,k) = -from_ilo / (state(i  ,j,k,URHO) - state(i-1,j,k,URHO));
+            if (mu_x(i  ,j,k) < 0.) amrex::Abort("mu_x(i  ,j,k) < 0");
+        }
         if (from_jhi > 0)
+        {
             mu_y(i,j+1,k) =  from_jhi  / (state(i,j+1,k,URHO) - state(i,j  ,k,URHO));
+            if (mu_y(i,j+1,k) < 0.) amrex::Abort("mu_y(i,j+1,k) < 0");
+        }
         if (from_jlo > 0)
+        {
             mu_y(i,j  ,k) = -from_jlo  / (state(i,j  ,k,URHO) - state(i,j-1,k,URHO));
+            if (mu_y(i,j  ,k) < 0.) amrex::Abort("mu_y(i,j  ,k) < 0");
+        }
         if (from_khi > 0)
+        {
             mu_z(i,j,k+1) =  from_khi  / (state(i,j,k+1,URHO) - state(i,j,k  ,URHO));
+            if (mu_z(i,j,k+1) < 0.) amrex::Abort("mu_z(i,j,k+1) < 0");
+        }
         if (from_klo > 0)
+        {
             mu_z(i,j,k  ) = -from_klo  / (state(i,j,k  ,URHO) - state(i,j,k-1,URHO));
+            if (mu_z(i,j,k  ) < 0.) amrex::Abort("mu_z(i,j,k  ) < 0");
+        }
     }
 }
 
