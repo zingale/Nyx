@@ -191,12 +191,77 @@ pc_update(
                             +(flx[1](i, j, k, n) - flx[1](i, j + 1, k, n))
                             +(flx[2](i, j, k, n) - flx[2](i, j, k + 1, n)) ) *
                           volinv * a_fact[n];
+    if(i==461&&j==173&&k==26)
+      AMREX_DEVICE_PRINTF("pc_update   0ijk 0i+1jk 1ijk 1ij+1k 2ijk 2ijk+1  : %d %d %d %d %g %g %g %g %g %g\n",i,j,k,n,  (flx[0](i, j, k, n) ) * volinv * a_fact[n],
+			  (flx[0](i + 1, j, k, n) ) * volinv * a_fact[n],
+			  (flx[1](i, j, k, n)) * volinv * a_fact[n],
+			  (flx[1](i, j + 1, k, n)) * volinv * a_fact[n],
+			  (flx[2](i, j, k, n)) * volinv * a_fact[n],
+			  (flx[2](i, j, k + 1, n)) * volinv * a_fact[n] );
+    if(i==461&&j==174&&k==26)
+      AMREX_DEVICE_PRINTF("pc_update   0ijk 0i+1jk 1ijk 1ij+1k 2ijk 2ijk+1  : %d %d %d %d %g %g %g %g %g %g\n",i,j,k,n,  (flx[0](i, j, k, n) ) * volinv * a_fact[n],
+			  (flx[0](i + 1, j, k, n) ) * volinv * a_fact[n],
+			  (flx[1](i, j, k, n)) * volinv * a_fact[n],
+			  (flx[1](i, j + 1, k, n)) * volinv * a_fact[n],
+			  (flx[2](i, j, k, n)) * volinv * a_fact[n],
+			  (flx[2](i, j, k + 1, n)) * volinv * a_fact[n] );
+    if(i==461&&j==172&&k==26)
+      AMREX_DEVICE_PRINTF("pc_update   0ijk 0i+1jk 1ijk 1ij+1k 2ijk 2ijk+1  : %d %d %d %d %g %g %g %g %g %g\n",i,j,k,n,  (flx[0](i, j, k, n) ) * volinv * a_fact[n],
+			  (flx[0](i + 1, j, k, n) ) * volinv * a_fact[n],
+			  (flx[1](i, j, k, n)) * volinv * a_fact[n],
+			  (flx[1](i, j + 1, k, n)) * volinv * a_fact[n],
+			  (flx[2](i, j, k, n)) * volinv * a_fact[n],
+			  (flx[2](i, j, k + 1, n)) * volinv * a_fact[n] );
+    if(i==460&&j==173&&k==26)
+      AMREX_DEVICE_PRINTF("pc_update   0ijk 0i+1jk 1ijk 1ij+1k 2ijk 2ijk+1  : %d %d %d %d %g %g %g %g %g %g\n",i,j,k,n,  (flx[0](i, j, k, n) ) * volinv * a_fact[n],
+			  (flx[0](i + 1, j, k, n) ) * volinv * a_fact[n],
+			  (flx[1](i, j, k, n)) * volinv * a_fact[n],
+			  (flx[1](i, j + 1, k, n)) * volinv * a_fact[n],
+			  (flx[2](i, j, k, n)) * volinv * a_fact[n],
+			  (flx[2](i, j, k + 1, n)) * volinv * a_fact[n] );
+    if(i==462&&j==173&&k==26)
+      AMREX_DEVICE_PRINTF("pc_update   0ijk 0i+1jk 1ijk 1ij+1k 2ijk 2ijk+1  : %d %d %d %d %g %g %g %g %g %g\n",i,j,k,n,  (flx[0](i, j, k, n) ) * volinv * a_fact[n],
+			  (flx[0](i + 1, j, k, n) ) * volinv * a_fact[n],
+			  (flx[1](i, j, k, n)) * volinv * a_fact[n],
+			  (flx[1](i, j + 1, k, n)) * volinv * a_fact[n],
+			  (flx[2](i, j, k, n)) * volinv * a_fact[n],
+			  (flx[2](i, j, k + 1, n)) * volinv * a_fact[n] );
+    if(i==461&&j==173&&k==25)
+      AMREX_DEVICE_PRINTF("pc_update   0ijk 0i+1jk 1ijk 1ij+1k 2ijk 2ijk+1  : %d %d %d %d %g %g %g %g %g %g\n",i,j,k,n,  (flx[0](i, j, k, n) ) * volinv * a_fact[n],
+			  (flx[0](i + 1, j, k, n) ) * volinv * a_fact[n],
+			  (flx[1](i, j, k, n)) * volinv * a_fact[n],
+			  (flx[1](i, j + 1, k, n)) * volinv * a_fact[n],
+			  (flx[2](i, j, k, n)) * volinv * a_fact[n],
+			  (flx[2](i, j, k + 1, n)) * volinv * a_fact[n] );
+    if(i==461&&j==173&&k==27)
+      AMREX_DEVICE_PRINTF("pc_update   0ijk 0i+1jk 1ijk 1ij+1k 2ijk 2ijk+1  : %d %d %d %d %g %g %g %g %g %g\n",i,j,k,n,  (flx[0](i, j, k, n) ) * volinv * a_fact[n],
+			  (flx[0](i + 1, j, k, n) ) * volinv * a_fact[n],
+			  (flx[1](i, j, k, n)) * volinv * a_fact[n],
+			  (flx[1](i, j + 1, k, n)) * volinv * a_fact[n],
+			  (flx[2](i, j, k, n)) * volinv * a_fact[n],
+			  (flx[2](i, j, k + 1, n)) * volinv * a_fact[n] );
+
   }
 
   update(i, j, k, UEINT) += a_half * (a_new - a_old) * ( 2.0 - 3.0 * gamma_minus_1) * u(i,j,k,UEINT);
   update(i, j, k, UEDEN) += a_half * (a_new - a_old) * ( 2.0 - 3.0 * gamma_minus_1) * u(i,j,k,UEINT);
 
   update(i, j, k, UEINT) += pdivu(i, j, k)*u(i,j,k,UEINT)*gamma_minus_1*dt*a_half;
+  int n=UEINT;
+  if(i==461&&j==173&&k==26)
+    AMREX_DEVICE_PRINTF("pc_update   pdivuup  : %d %d %d %d %g\n",i,j,k,n,  pdivu(i, j, k)*u(i,j,k,UEINT)*gamma_minus_1*dt*a_half);
+  if(i==461&&j==174&&k==26)
+    AMREX_DEVICE_PRINTF("pc_update   pdivuup  : %d %d %d %d %g\n",i,j,k,n,  pdivu(i, j, k)*u(i,j,k,UEINT)*gamma_minus_1*dt*a_half);
+  if(i==461&&j==172&&k==26)
+    AMREX_DEVICE_PRINTF("pc_update   pdivuup  : %d %d %d %d %g\n",i,j,k,n,  pdivu(i, j, k)*u(i,j,k,UEINT)*gamma_minus_1*dt*a_half);
+  if(i==460&&j==173&&k==26)
+    AMREX_DEVICE_PRINTF("pc_update   pdivuup  : %d %d %d %d %g\n",i,j,k,n,  pdivu(i, j, k)*u(i,j,k,UEINT)*gamma_minus_1*dt*a_half);
+  if(i==462&&j==173&&k==26)
+    AMREX_DEVICE_PRINTF("pc_update   pdivuup  : %d %d %d %d %g\n",i,j,k,n,  pdivu(i, j, k)*u(i,j,k,UEINT)*gamma_minus_1*dt*a_half);
+  if(i==461&&j==173&&k==25)
+    AMREX_DEVICE_PRINTF("pc_update   pdivuup  : %d %d %d %d %g\n",i,j,k,n,  pdivu(i, j, k)*u(i,j,k,UEINT)*gamma_minus_1*dt*a_half);
+  if(i==461&&j==173&&k==27)
+    AMREX_DEVICE_PRINTF("pc_update   pdivuup  : %d %d %d %d %g\n",i,j,k,n,  pdivu(i, j, k)*u(i,j,k,UEINT)*gamma_minus_1*dt*a_half);
 }
 
 // Host functions

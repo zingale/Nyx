@@ -35,7 +35,22 @@ void reset_internal_e (const int i,
     Real rho_eint = u(i,j,k,UEDEN) - ke;
     Real dummy_pres = 1e200;
     Real eint_new = -1e200;
-
+    Real sound_speed_factor=std::sqrt((gamma_minus_1+1.0)*(gamma_minus_1));
+    Real c=sound_speed_factor*std::sqrt(u(i,j,k,Density)*u(i,j,k,Eint)*rhoInv/u(i,j,k,Density));
+    if(i==461&&j==173&&k==26)
+      AMREX_DEVICE_PRINTF("update e   r ux uy uz c re rE  : %d %d %d %g %g %g %g %g %g %g\n",i,j,k,u(i,j,k,Density),Up,Vp,Wp,c,u(i,j,k,Eint), u(i,j,k,Eden));
+    if(i==461&&j==174&&k==26)
+      AMREX_DEVICE_PRINTF("update e   r ux uy uz c re rE  : %d %d %d %g %g %g %g %g %g %g\n",i,j,k,u(i,j,k,Density),Up,Vp,Wp,c,u(i,j,k,Eint), u(i,j,k,Eden));
+    if(i==461&&j==172&&k==26)
+      AMREX_DEVICE_PRINTF("update e   r ux uy uz c re rE  : %d %d %d %g %g %g %g %g %g %g\n",i,j,k,u(i,j,k,Density),Up,Vp,Wp,c,u(i,j,k,Eint), u(i,j,k,Eden));
+    if(i==460&&j==173&&k==26)
+      AMREX_DEVICE_PRINTF("update e   r ux uy uz c re rE  : %d %d %d %g %g %g %g %g %g %g\n",i,j,k,u(i,j,k,Density),Up,Vp,Wp,c,u(i,j,k,Eint), u(i,j,k,Eden));
+    if(i==462&&j==173&&k==26)
+      AMREX_DEVICE_PRINTF("update e   r ux uy uz c re rE  : %d %d %d %g %g %g %g %g %g %g\n",i,j,k,u(i,j,k,Density),Up,Vp,Wp,c,u(i,j,k,Eint), u(i,j,k,Eden));
+    if(i==461&&j==173&&k==25)
+      AMREX_DEVICE_PRINTF("update e   r ux uy uz c re rE  : %d %d %d %g %g %g %g %g %g %g\n",i,j,k,u(i,j,k,Density),Up,Vp,Wp,c,u(i,j,k,Eint), u(i,j,k,Eden));
+    if(i==461&&j==173&&k==27)
+      AMREX_DEVICE_PRINTF("update e   r ux uy uz c re rE  : %d %d %d %g %g %g %g %g %g %g\n",i,j,k,u(i,j,k,Density),Up,Vp,Wp,c,u(i,j,k,Eint), u(i,j,k,Eden));
     // Reset (e from e) if it's greater than 0.01% of big E.
     if (rho_eint > 0.0 && rho_eint / u(i,j,k,UEDEN) > 1.0e-6 && interp == 0)
     {

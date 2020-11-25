@@ -6,7 +6,7 @@ using namespace amrex;
 
 using std::string;
 
-AMREX_GPU_DEVICE
+//AMREX_GPU_DEVICE
 AMREX_FORCE_INLINE
 void
 compute_mu_for_enforce_min_density(
@@ -104,7 +104,7 @@ compute_mu_for_enforce_min_density(
     }
 }
 
-AMREX_GPU_DEVICE
+//AMREX_GPU_DEVICE
 AMREX_FORCE_INLINE
 void
 create_update_for_minimum_density(
@@ -252,7 +252,7 @@ Nyx::enforce_minimum_density( MultiFab& S_old, MultiFab& S_new,
                  auto const& mu_z_arr = mu_z.array(mfi);
 
                  //Unclear whether this should be part of previous ParallelFor
-                 amrex::ParallelFor(gbx, [=] AMREX_GPU_DEVICE(int i, int j, int k) noexcept 
+                 amrex::LoopConcurrentOnCpu(gbx, [=] (int i, int j, int k) noexcept 
                  {
                    compute_mu_for_enforce_min_density(i, j, k, sbord, mu_x_arr, mu_y_arr, mu_z_arr, lsmall_dens);
                  });
@@ -268,7 +268,7 @@ Nyx::enforce_minimum_density( MultiFab& S_old, MultiFab& S_new,
                 auto const& mu_z_arr  = mu_z.array(mfi);
                 auto const& upd_arr   = update.array(mfi);
 
-                amrex::ParallelFor(bx, [=] AMREX_GPU_DEVICE(int i, int j, int k) noexcept 
+                amrex::LoopConcurrentOnCpu(bx, [=] (int i, int j, int k) noexcept 
                 {
                   create_update_for_minimum_density(i, j, k, sbord_arr, 
                                                     mu_x_arr, mu_y_arr, mu_z_arr, upd_arr, 

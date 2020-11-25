@@ -997,11 +997,20 @@ Nyx::est_time_step (Real dt_old)
 #endif
                                                     else
                                                       c = 0.0;
-
+	      if(i==461&&j==173&&k==26)
+		AMREX_DEVICE_PRINTF("update dt    : %d %d %d %g %g %g\n",i,j,k,u(i,j,k,Density),u(i,j,k,Eint), c);
+	      if(i==461&&j==174&&k==26)
+		AMREX_DEVICE_PRINTF("update dt    : %d %d %d %g %g %g\n",i,j,k,u(i,j,k,Density),u(i,j,k,Eint), c);
                                                     Real dt1 = dx[0]/(c + amrex::Math::abs(ux));
                                                     Real dt2 = dx[1]/(c + amrex::Math::abs(uy));
                                                     Real dt3 = dx[2]/(c + amrex::Math::abs(uz));
                                                     dt_gpu = amrex::min(dt_gpu,amrex::min(dt1,amrex::min(dt2,dt3)));
+	      if(i==461&&j==173&&k==26)
+		AMREX_DEVICE_PRINTF("update dt  r ux uy uz c re dt  : %d %d %d %g %g %g %g %g %g %g\n",i,j,k,u(i,j,k,Density),ux,uy,uz,c,u(i,j,k,Eint), u(i,j,k,Eden), dt_gpu);
+	      if(i==461&&j==174&&k==26)
+		AMREX_DEVICE_PRINTF("update dt  r ux uy uz c re dt  : %d %d %d %g %g %g %g %g %g %g\n",i,j,k,u(i,j,k,Density),ux,uy,uz,c,u(i,j,k,Eint), u(i,j,k,Eden), dt_gpu);
+	      if(i==100&&j==100&k==100)
+		AMREX_DEVICE_PRINTF("update dt  r ux uy uz c re dt  : %d %d %d %g %g %g %g %g %g %g\n",i,j,k,u(i,j,k,Density),ux,uy,uz,c,u(i,j,k,Eint), u(i,j,k,Eden), dt_gpu);
 
                                                   }
                                                 }
@@ -2571,7 +2580,8 @@ Nyx::compute_new_temp (MultiFab& S_new, MultiFab& D_new)
 	    auto atomic_rates = atomic_rates_glob;
             AMREX_PARALLEL_FOR_3D(bx, i, j ,k,
             {
-
+	      if(i==461&&j==173&&k==26)
+		AMREX_DEVICE_PRINTF("update temp : %d %d %d %g %g %g\n",i,j,k,state(i,j,k,Density),state(i,j,k,Eint), diag_eos(i,j,k,Temp_comp));
               Real rhoInv = 1.e0 / state(i,j,k,Density);
               Real eint = state(i,j,k,Eint) * rhoInv;
 
@@ -2585,6 +2595,8 @@ Nyx::compute_new_temp (MultiFab& S_new, MultiFab& D_new)
 
                 nyx_eos_T_given_Re_device(atomic_rates, gamma_minus_1_in, h_species_in, JH, JHe, &diag_eos(i,j,k,Temp_comp), &diag_eos(i,j,k,Ne_comp), 
                                                state(i,j,k,Density), eint, a);
+	      if(i==461&&j==173&&k==26)
+		AMREX_DEVICE_PRINTF("update temp1: %d %d %d %g %g %g\n",i,j,k,state(i,j,k,Density),state(i,j,k,Eint), diag_eos(i,j,k,Temp_comp));
                 if(diag_eos(i,j,k,Temp_comp)>=dummy_large_temp && dummy_max_temp_dt == 1)
                 {
                   diag_eos(i,j,k,Temp_comp)=dummy_large_temp;
@@ -2600,7 +2612,8 @@ Nyx::compute_new_temp (MultiFab& S_new, MultiFab& D_new)
 
                    state(i,j,k,Eint) = state(i,j,k,Density) * eint;
                    state(i,j,k,Eden) = state(i,j,k,Eint) + ke;
-
+	      if(i==461&&j==173&&k==26)
+		AMREX_DEVICE_PRINTF("update temp2: %d %d %d %g %g %g\n",i,j,k,state(i,j,k,Density),state(i,j,k,Eint), diag_eos(i,j,k,Temp_comp));
                 }
               }
             else
@@ -2617,8 +2630,11 @@ Nyx::compute_new_temp (MultiFab& S_new, MultiFab& D_new)
                 diag_eos(i,j,k,Temp_comp) = dummy_small_temp;
                 state(i,j,k,Eint) = state(i,j,k,Density) * eint;
                 state(i,j,k,Eden) = state(i,j,k,Eint) + ke;
+	      if(i==461&&j==173&&k==26)
+		AMREX_DEVICE_PRINTF("update temp3: %d %d %d %g %g %g\n",i,j,k,state(i,j,k,Density),state(i,j,k,Eint), diag_eos(i,j,k,Temp_comp));
               }
-
+	      if(i==461&&j==173&&k==26)
+		AMREX_DEVICE_PRINTF("update temp4: %d %d %d %g %g %g\n",i,j,k,state(i,j,k,Density),state(i,j,k,Eint), diag_eos(i,j,k,Temp_comp));
             });
             amrex::Gpu::synchronize();
           }
