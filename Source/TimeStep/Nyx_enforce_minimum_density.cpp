@@ -29,7 +29,7 @@ compute_mu_for_enforce_min_density(
 
     if (state(i,j,k,URHO) < small_dens)
     {
-        // std::cout << "UPDATING " << IntVect(i,j,k) << " WITH INITIAL RHO " << state(i,j,k,URHO) << std::endl;
+        std::cout << "UPDATING " << IntVect(i,j,k) << " WITH INITIAL RHO " << state(i,j,k,URHO) << std::endl;
         // std::cout << " and x neighbors " <<  state(i+1,j,k,URHO) << " " <<  state(i-1,j,k,URHO) << std::endl;
         // std::cout << " and y neighbors " <<  state(i,j+1,k,URHO) << " " <<  state(i,j-1,k,URHO) << std::endl;
         // std::cout << " and z neighbors " <<  state(i,j,k+1,URHO) << " " <<  state(i,j,k-1,URHO) << std::endl;
@@ -69,18 +69,38 @@ compute_mu_for_enforce_min_density(
         Real from_khi = fac * avail_from_khi;
         Real from_klo = fac * avail_from_klo;
 
+        // mu should always be positive - we view this as a "diffusive" operator
+
         if (from_ihi > 0)
+        {
             mu_x(i+1,j,k) =  from_ihi / (state(i+1,j,k,URHO) - state(i  ,j,k,URHO));
+            if (mu_x(i+1,j,k) < 0.) amrex::Abort("mu_x(i+1,j,k) < 0");
+        }
         if (from_ilo > 0)
+        {
             mu_x(i  ,j,k) = -from_ilo / (state(i  ,j,k,URHO) - state(i-1,j,k,URHO));
+            if (mu_x(i  ,j,k) < 0.) amrex::Abort("mu_x(i  ,j,k) < 0");
+        }
         if (from_jhi > 0)
+        {
             mu_y(i,j+1,k) =  from_jhi  / (state(i,j+1,k,URHO) - state(i,j  ,k,URHO));
+            if (mu_y(i,j+1,k) < 0.) amrex::Abort("mu_y(i,j+1,k) < 0");
+        }
         if (from_jlo > 0)
+        {
             mu_y(i,j  ,k) = -from_jlo  / (state(i,j  ,k,URHO) - state(i,j-1,k,URHO));
+            if (mu_y(i,j  ,k) < 0.) amrex::Abort("mu_y(i,j  ,k) < 0");
+        }
         if (from_khi > 0)
+        {
             mu_z(i,j,k+1) =  from_khi  / (state(i,j,k+1,URHO) - state(i,j,k  ,URHO));
+            if (mu_z(i,j,k+1) < 0.) amrex::Abort("mu_z(i,j,k+1) < 0");
+        }
         if (from_klo > 0)
+        {
             mu_z(i,j,k  ) = -from_klo  / (state(i,j,k  ,URHO) - state(i,j,k-1,URHO));
+            if (mu_z(i,j,k  ) < 0.) amrex::Abort("mu_z(i,j,k  ) < 0");
+        }
     }
 }
 
@@ -98,6 +118,17 @@ create_update_for_minimum_density(
   amrex::Array4<amrex::Real> const& update,
   const int FirstSpec, const int NumSpec)
 {
+    if (i == 461 and j == 173 and k == 26) 
+    {
+       for (int n = 0; n < state.nComp(); n++)
+       {    
+           std::cout << "Before update " << n << " " << state(i,j,k,n) << std::endl;
+       }
+       std::cout << "MU_X " << mu_x(i+1,j,k) << " " << mu_x(i,j,k) << std::endl;
+       std::cout << "MU_Y " << mu_y(i,j+1,k) << " " << mu_y(i,j,k) << std::endl;
+       std::cout << "MU_Z " << mu_z(i,j,k+1) << " " << mu_z(i,j,k) << std::endl;
+    }
+
     for (int n = 0; n < state.nComp(); n++)
     {
         if (n == URHO or n == UMX or n == UMY or n == UMZ or n == UEDEN or n == UEINT) 
@@ -112,6 +143,17 @@ create_update_for_minimum_density(
             update(i,j,k,n) = 0.0;
         }
     }
+
+    if (i == 461 and j == 173 and k == 26) 
+       for (int n = 0; n < state.nComp(); n++)
+       {    
+           std::cout << "After update " << n << " " << state(i,j,k,n)+update(i,j,k,n) << std::endl;
+       }
+
+
+    if ( (state(i,j,k,UEDEN)+update(i,j,k,UEDEN)) < 0) std::cout << "rho E < 0 " << IntVect(i,j,k) << " " << 
+         (state(i,j,k,UEINT)+update(i,j,k,UEINT))  <<  " " << 
+         (state(i,j,k,UEDEN)+update(i,j,k,UEDEN))  << std::endl;
 
     // Enforce that X is unchanged with change in rho
     for (int n = 0; n < NumSpec; ++n)
@@ -151,13 +193,30 @@ Nyx::enforce_minimum_density( MultiFab& S_old, MultiFab& S_new,
         MultiFab mu_y(amrex::convert(grids,IntVect(0,1,0)), dmap, 1, 1);
         MultiFab mu_z(amrex::convert(grids,IntVect(0,0,1)), dmap, 1, 1);
 
-        Real rho_old_min_before = S_old.min(0);
-        Real rho_old_sum_before = S_old.sum(0);
+        Real rho_old_min_before = S_old.min(URHO);
+        Real  ru_old_min_before = S_old.min(UMX);
+        Real  rv_old_min_before = S_old.min(UMY);
+        Real  rw_old_min_before = S_old.min(UMZ);
+        Real  re_old_min_before = S_old.min(UEINT);
+        Real  rE_old_min_before = S_old.min(UEDEN);
 
-        Real rho_new_min_before = S_new.min(0);
+        Real rho_new_min_before = S_new.min(URHO);
+        Real  ru_new_min_before = S_new.min(UMX);
+        Real  rv_new_min_before = S_new.min(UMY);
+        Real  rw_new_min_before = S_new.min(UMZ);
+        Real  re_new_min_before = S_new.min(UEINT);
+        Real  rE_new_min_before = S_new.min(UEDEN);
+
+        Real rho_old_sum_before = S_old.sum(0);
         Real rho_new_sum_before = S_new.sum(0);
 
         Real rho_new_min_after;
+        Real  re_new_min_after;
+        Real  ru_new_min_after;
+        Real  rv_new_min_after;
+        Real  rw_new_min_after;
+        Real  rE_new_min_after;
+
         Real rho_new_sum_after;
 
         Real rho_new_min = rho_new_min_before;
@@ -165,6 +224,9 @@ Nyx::enforce_minimum_density( MultiFab& S_old, MultiFab& S_new,
         bool too_low = (rho_new_min < small_dens);
 
         int iter = 0;
+
+        if (S_new.contains_nan())
+               amrex::Abort("NaN in enforce_minimum_density before we start iterations");
 
         // 10 is an arbitrary limit here -- just to make sure we don't get stuck here somehow 
         while (too_low and iter < 10)
@@ -217,13 +279,31 @@ Nyx::enforce_minimum_density( MultiFab& S_old, MultiFab& S_new,
             S_new.plus(update,0,S_new.nComp(),0);
 
             if (S_new.contains_nan())
-               amrex::Abort("NaN in enforce_minimum_density");
+            {
+               amrex::Print() << "Doing iteration iter " << std::endl; 
+               amrex::Abort("   and finding NaN in enforce_minimum_density");
+            }
 
-            rho_new_min_after = S_new.min(0);
+            rho_new_min_after = S_new.min(URHO);
+             ru_new_min_after = S_new.min(UMX);
+             rv_new_min_after = S_new.min(UMY);
+             rw_new_min_after = S_new.min(UMZ);
+             re_new_min_after = S_new.min(UEINT);
+             rE_new_min_after = S_new.min(UEDEN);
 
             amrex::Print() << "After " << iter+1 << " iterations " << std::endl;
-            amrex::Print() << "  MIN OF rho_old / rho_new / new rho_new " << 
+            amrex::Print() << "  MIN OF rho: old / new / new new " << 
                 rho_old_min_before << " " << rho_new_min_before << " " << rho_new_min_after << std::endl;
+            amrex::Print() << "  MIN OF  ru: old / new / new new " << 
+                ru_old_min_before << " " <<  ru_new_min_before << " " << ru_new_min_after << std::endl;
+            amrex::Print() << "  MIN OF  rv: old / new / new new " << 
+                rv_old_min_before << " " << rv_new_min_before << " " << rv_new_min_after << std::endl;
+            amrex::Print() << "  MIN OF  rw: old / new / new new " << 
+                rw_old_min_before << " " << rw_new_min_before << " " << rw_new_min_after << std::endl;
+            amrex::Print() << "  MIN OF  re: old / new / new new " << 
+                re_old_min_before << " " << re_new_min_before << " " << re_new_min_after << std::endl;
+            amrex::Print() << "  MIN OF  rE: old / new / new new " << 
+                rE_old_min_before << " " << rE_new_min_before << " " << rE_new_min_after << std::endl;
 
             too_low = (rho_new_min_after < small_dens);
             iter++;
